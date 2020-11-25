@@ -43,6 +43,21 @@ int setElement(TABLEAU* tab, int pos, int element) {
 
 }
 
+int displayElements(TABLEAU* tab, int startPos, int endPos) {
+	if (tab->elt == NULL ||  startPos < 0 || endPos<0) { return 0; }
+
+	if (endPos < startPos) {
+		int buffer = endPos;
+		endPos = startPos;
+		startPos = buffer;
+	}
+
+	for (int i = startPos-1; i <= endPos-1; i++) {				//On reste sur l'hypothèse selon laquelle le 1er élément est à la position 1
+		printf("%d ", *(tab->elt + i));
+	}
+	return 0;
+}
+
 int main() {
 
 	TABLEAU tab = newArray();
@@ -51,8 +66,14 @@ int main() {
 
 	printf("%d\n", incrementArraySize(&tab, 2));
 
-	printf("%d\n", setElement(&tab, 56, 32));
+	printf("%d\n", setElement(&tab, 56, 32));				//Va inclure 32 au rang 56 (en supposant que la première valeur est au rang 1)
 
-	
+	for (int i = 0; i < 100; i++) {
+		printf("%d ", *(tab.elt + i));
+	}
+
+	printf("\n");
+
+	displayElements(&tab, 54, 58);			//va donner du rang 54 au rang 58 (où le premier élément est au rang 1)
 
 }
