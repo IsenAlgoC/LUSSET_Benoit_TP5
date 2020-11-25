@@ -55,25 +55,72 @@ int displayElements(TABLEAU* tab, int startPos, int endPos) {
 	for (int i = startPos-1; i <= endPos-1; i++) {				//On reste sur l'hypothèse selon laquelle le 1er élément est à la position 1
 		printf("%d ", *(tab->elt + i));
 	}
+	printf("\n");
 	return 0;
+}
+
+int deleteElements(TABLEAU* tab, int startPos, int endPos) {
+	if (tab->elt == NULL || startPos < 1 || endPos < 1 || startPos > tab->size || endPos > tab->size) { return -1; }
+
+	if (endPos < startPos) {
+		int buffer = endPos;
+		endPos = startPos;
+		startPos = buffer;
+	}
+
+	int nbValeurs = endPos - startPos + 1;
+
+	if (nbValeurs == tab->size) { free(tab->elt); tab->elt = NULL; tab->size = 0; tab->eltsCount = 0;return tab->size; }
+
+	for (int i = startPos - 1; i < tab->size - endPos; i++) {
+		*(tab->elt + i) = *(tab->elt + i + nbValeurs);
+	}
+
+	int* memoire = tab->elt;
+
+	tab->elt = (int*)realloc(tab->elt, ((size_t)tab->size - (size_t)nbValeurs * sizeof(int)));
+	if (tab->elt == NULL) { tab->elt = memoire; return -1; }
+	tab->size -= nbValeurs;
+	return tab->size;
 }
 
 int main() {
 
+	//Initialise le tableau
+
 	TABLEAU tab = newArray();
 
-	printf("%d\n", tab.size);
+	//Imprime la taille du tableau
 
-	printf("%d\n", incrementArraySize(&tab, 2));
+	printf("Le tableau a une taille de %d\n", tab.size);
 
-	printf("%d\n", setElement(&tab, 56, 32));				//Va inclure 32 au rang 56 (en supposant que la première valeur est au rang 1)
+	//Imprime la taille du tableau après agrandissement de 2
 
-	for (int i = 0; i < 100; i++) {
-		printf("%d ", *(tab.elt + i));
-	}
+	printf("\nApres agrandissement, le tableau a une taille de %d\n", incrementArraySize(&tab, 2));
+
+	//Va inclure 32 au rang 56 (en supposant que la première valeur est au rang 1)
+
+	printf("\nOn ajoute %d au rang %d\n",32, setElement(&tab, 56, 32));	
+
+	//va donner du rang 54 au rang 58 (où le premier élément est au rang 1)
+
+	printf("\nLes elements du rang 54 au rang 58 sont :");
+	displayElements(&tab, 54, 58);			
 
 	printf("\n");
 
-	displayElements(&tab, 54, 58);			//va donner du rang 54 au rang 58 (où le premier élément est au rang 1)
+	/*supprime les éléments entre 2 positions puis libère leur espace
+	 ici on cherchera à tout supprimer jusqu'au rang 56 (où on retrouve le 32 de la fonction précédente*/
+
+	deleteElements(&tab, 1, 55);
+
+	//Imprime tout le tableau
+
+	printf("Le tableau final est donc : ");
+	for (int i = 0; i < tab.size-1; i++) {
+		printf("%d ", *(tab.elt + i));
+	}
+	printf("\n\n");
+
 
 }
